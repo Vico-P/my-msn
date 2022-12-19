@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mymsn
+    username: mymsn
+    password: mymsn
+  # Liquibase use by default settings of datasource
+  liquibase:
+    change-log: db/master.xml

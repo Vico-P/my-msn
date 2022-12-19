@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+    <changeSet id="mymsn_database_creation" author="vico">
+        <createTable tableName="users">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="login" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="email" type="varchar(50)"></column>
+            <column name="password_hash" type="varchar(60)"></column>
+            <column name="is_verified" type="boolean"></column>
+            <column name="created_at" type="timestamp without time zone"></column>
+            <column name="updated_at" type="timestamp without time zone"></column>
+            <column name="deleted_at" type="timestamp without time zone"></column>
+        </createTable>
+        <createTable tableName="conversations">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="created_at" type="timestamp without time zone"></column>
+            <column name="updated_at" type="timestamp without time zone"></column>
+        </createTable>
+        <createTable tableName="messages">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="uuid"></column>
+            <column name="conversation_id" type="uuid"></column>
+            <column name="created_at" type="timestamp without time zone"></column>
+            <column name="updated_at" type="timestamp without time zone"></column>
+            <column name="value" type="varchar(255)"></column>
+        </createTable>
+        <createTable tableName="friendships">
+            <column name="sender_user_id" type="uuid"></column>
+            <column name="receiver_user_id" type="uuid"></column>
+            <column name="status" type="varchar(10)"></column>
+            <column name="created_at" type="timestamp without time zone"></column>
+            <column name="updated_at" type="timestamp without time zone"></column>
+        </createTable>
+        <createTable tableName="logs">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="uuid"></column>
+            <column name="action" type="varchar(10)"></column>
+            <column name="message" type="varchar(150)"></column>
+        </createTable>
+    </changeSet>
+    <!-- Only executed for dev and test profiles of Spring -->
+    <changeSet id="fake_data_loading" author="vico" context="dev,test">
+        <loadData
+            file="db/fake-data/users.csv"
+            separator=";"
+            tableName="users">
+            <column name="id" type="uuid" />
+            <column name="email" type="string" />
+            <column name="login" type="string" />
+            <column name="password_hash" type="string" />
+        </loadData>
+        <loadData
+            file="db/fake-data/friendships.csv"
+            separator=";"
+            tableName="friendships">
+            <column name="sender_user_id" type="uuid" />
+            <column name="receiver_user_id" type="uuid" />
+            <column name="status" type="string" />
+        </loadData>
+        <loadData
+            file="db/fake-data/messages.csv"
+            separator=";"
+            tableName="messages">
+            <column name="id" type="uuid" />
+            <column name="conversation_id" type="uuid" />
+            <column name="user_id" type="uuid" />
+            <column name="value" type="string" />
+        </loadData>
+        <loadData
+            file="db/fake-data/conversations.csv"
+            separator=";"
+            tableName="conversations">
+            <column name="id" type="uuid" />
+        </loadData>
+    </changeSet>
+    <changeSet id="mymsn_database_foreignkey" author="vico">
+        <addForeignKeyConstraint baseTableName="messages" baseColumnNames="user_id"
+            constraintName="user_id_message_fk" referencedTableName="users" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="messages" baseColumnNames="conversation_id"
+            constraintName="conversation_id_message_fk" referencedTableName="conversations" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="friendships" baseColumnNames="sender_user_id"
+            constraintName="sender_user_id_friendship_fk" referencedTableName="users" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="friendships" baseColumnNames="receiver_user_id"
+            constraintName="receiver_user_id_friendship_fk" referencedTableName="users" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="logs" baseColumnNames="user_id"
+            constraintName="user_id_logs_fk" referencedTableName="users" referencedColumnNames="id" />
+    </changeSet>
+    <changeSet id="conversation_participant_table_creation" author="vico">
+        <createTable tableName="conversations_participants">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="user_id" type="uuid"></column>
+            <column name="conversation_id" type="uuid"></column>
+            <column name="created_at" type="timestamp without time zone"></column>
+            <column name="updated_at" type="timestamp without time zone"></column>
+        </createTable>
+    </changeSet>
+    <changeSet id="conversations_participants_fake_data" author="vico" context="dev,test">
+        <loadData
+            file="db/fake-data/conversations_participants.csv"
+            separator=";"
+            tableName="conversations_participants">
+            <column name="id" type="uuid" />
+            <column name="user_id" />
+            <column name="conversation_id" />
+        </loadData>
+    </changeSet>
+    <changeSet id="conversation_participants_fk" author="vico">
+        <addForeignKeyConstraint baseTableName="conversations_participants" baseColumnNames="user_id"
+            constraintName="user_id_conversations_participants" referencedTableName="users" referencedColumnNames="id" />
+        <addForeignKeyConstraint baseTableName="conversations_participants" baseColumnNames="conversation_id"
+            constraintName="conversation_id_conversations_participants" referencedTableName="conversations" referencedColumnNames="id" />
+    </changeSet>
+</databaseChangeLog>

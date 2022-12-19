@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    # @spring.profiles.active@ get value define in properties from pom.xml define by the maven profile used
+    active: @spring.profiles.active@
+security:
+  ignored: /**
