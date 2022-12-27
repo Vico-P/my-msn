@@ -4,3 +4,5 @@ spring:
     active: @spring.profiles.active@
 security:
   ignored: /**
+configuration:
+  secret: "asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4"

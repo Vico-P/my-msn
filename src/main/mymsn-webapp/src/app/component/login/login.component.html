@@ -1,0 +1,29 @@
+<html>
+  <body>
+    <div class="d-flex flex-column align-items-center mt-4">
+      <h2>{{ title }}</h2>
+      <form [formGroup]="loginForm">
+        <span class="p-float-label">
+          <input id="login" type="text" pInputText formControlName="login" />
+          <label for="login">Login</label>
+        </span>
+        <span class="p-float-label">
+          <input
+            id="password"
+            type="password"
+            pInputText
+            formControlName="password"
+          />
+          <label for="password">Password</label>
+        </span>
+      </form>
+      <button
+        class="mt-2"
+        pButton
+        type="button"
+        label="Click"
+        (click)="login()"
+      ></button>
+    </div>
+  </body>
+</html>
