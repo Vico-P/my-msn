@@ -18,6 +18,6 @@ public class UserService {
     }
 
     public Optional<User> findUserByLogin(String login) {
-        return this.userRepository.findByLogin(login);
+        return this.userRepository.findByLogin(login.toLowerCase());
     }
 }
