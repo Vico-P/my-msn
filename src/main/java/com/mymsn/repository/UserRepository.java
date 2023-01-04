@@ -10,5 +10,7 @@ import com.mymsn.entities.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    public Optional<User> findByLogin(String login);
+    public Optional<User> findByLoginIgnoreCase(String login);
+
+    public Optional<User> findByEmailIgnoreCase(String email);
 }

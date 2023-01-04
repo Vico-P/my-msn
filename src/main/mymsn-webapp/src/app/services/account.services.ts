@@ -1,8 +1,9 @@
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environment/environment';
 import { Router } from '@angular/router';
+import User from '../entities/user.entities';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
@@ -27,7 +28,55 @@ export class AccountService {
             localStorage.setItem('token', res.token);
             resolve(undefined);
           },
-          error: (error: Error) => {
+          error: (error: HttpErrorResponse) => {
+            reject(error);
+          },
+        });
+    });
+  }
+
+  public register({
+    username,
+    email,
+    password,
+    confirmPassword,
+  }: {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }): Promise<User> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .post<User>(`${environment.apiUrl}/register`, {
+          username,
+          email,
+          password,
+          confirmPassword,
+        })
+        .subscribe({
+          next: (res) => {
+            resolve(res);
+          },
+          error: (error: HttpErrorResponse) => {
+            reject(error);
+          },
+        });
+    });
+  }
+
+  public verifyEmail(token: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .patch<null>(
+          `${environment.apiUrl}/verify-email?token=${token}`,
+          undefined
+        )
+        .subscribe({
+          next: () => {
+            resolve();
+          },
+          error: (error: HttpErrorResponse) => {
             reject(error);
           },
         });

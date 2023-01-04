@@ -8,10 +8,28 @@ import { LoginComponent } from './component/login/login.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MyMsnInterceptor } from './interceptor/mymsn.interceptor';
 import { TokenGuard } from './guard/token.guard';
+import { NotFoundComponent } from './component/not-found/not-found.component';
+import { RegisterComponent } from './component/register/register.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HomeComponent } from './component/home/home.component';
+import { VerifyEmailComponent } from './component/verify-email/verify-email.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
-  imports: [BrowserModule, HttpClientModule, SharedModule, AppRoutingModule],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    NotFoundComponent,
+    RegisterComponent,
+    HomeComponent,
+    VerifyEmailComponent,
+  ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    SharedModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+  ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: MyMsnInterceptor, multi: true },
     TokenGuard,

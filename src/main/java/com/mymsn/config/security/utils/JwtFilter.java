@@ -3,6 +3,7 @@ package com.mymsn.config.security.utils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.mymsn.config.jwt.TokenManager;
 import com.mymsn.entities.Authority;
 import com.mymsn.entities.User;
-import com.mymsn.services.UserService;
+import com.mymsn.repository.UserRepository;
+import com.mymsn.utils.MyMsnUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -30,11 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
     private final Logger log = LoggerFactory.getLogger(JwtFilter.class);
 
     private final TokenManager tokenManager;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public JwtFilter(TokenManager tokenManager, UserService userService) {
+    public JwtFilter(TokenManager tokenManager, UserRepository userRepository) {
         this.tokenManager = tokenManager;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -47,7 +49,10 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 Jws<Claims> identity = this.tokenManager.parseJwt(token);
                 String login = identity.getBody().get("login").toString();
-                Optional<User> optionalUser = this.userService.findUserByLogin(login);
+                // Check if the login is an email or a username
+                Optional<User> optionalUser = Pattern.compile(MyMsnUtils.REGEX_EMAIL).matcher(login).matches()
+                        ? this.userRepository.findByEmailIgnoreCase(login)
+                        : this.userRepository.findByLoginIgnoreCase(login);
                 if (optionalUser.isPresent()) {
                     // Setting user identity in security context
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -55,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
                             Arrays.asList(new Authority("USER")));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
-                    log.error("Error : User with login  " + login + " not found");
+                    log.error("Error : User with username/email  " + login + " not found");
                 }
             } catch (SignatureException | ExpiredJwtException ex) {
                 log.error("Error while trying to decode token", ex);

@@ -1,5 +1,6 @@
 package com.mymsn.entities;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.mymsn.utils.enums.Action;
@@ -27,6 +28,9 @@ public class Log {
     @Column(name = "message", length = 255)
     private String message;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
     public UUID getId() {
         return this.id;
     }
@@ -51,6 +55,14 @@ public class Log {
         this.message = message;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public Log id(UUID id) {
         setId(id);
         return this;
@@ -63,6 +75,11 @@ public class Log {
 
     public Log message(String message) {
         setMessage(message);
+        return this;
+    }
+
+    public Log createdAt(LocalDateTime createdAt) {
+        setCreatedAt(createdAt);
         return this;
     }
 }
