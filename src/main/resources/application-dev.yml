@@ -10,7 +10,7 @@ mail:
   host: smtp.mailgun.org
   port: 587
   username: postmaster@sandboxb1336a3eae784c92b3c5a9b10da17989.mailgun.org
-  password: 319a3de82890b7a10ba2bf3919944668-6ae2ecad-0e1c657e
+  password:
   enablettls: true
   auth: true
   frommail: vicosenderdev@yopmail.com
