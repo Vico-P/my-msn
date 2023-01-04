@@ -3,43 +3,41 @@ package com.mymsn.config.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.mymsn.config.jwt.TokenManager;
 import com.mymsn.config.security.utils.JwtFilter;
-import com.mymsn.services.UserService;
+import com.mymsn.repository.UserRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
   private final TokenManager tokenManager;
 
-  private final UserService userService;
+  private final UserRepository userRepository;
 
   @Autowired
-  public SecurityConfiguration(TokenManager tokenManager, UserService userService) {
+  public SecurityConfiguration(TokenManager tokenManager, UserRepository userRepository) {
     this.tokenManager = tokenManager;
-    this.userService = userService;
+    this.userRepository = userRepository;
   }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.csrf().disable().authorizeHttpRequests(
-        (request) -> request.requestMatchers("/api/login").permitAll().anyRequest().authenticated())
+        (request) -> request
+            .requestMatchers("/api/login").permitAll()
+            .requestMatchers("/api/register").permitAll()
+            .requestMatchers("/api/verify-email").permitAll()
+            .anyRequest().authenticated())
         // Adding our filter to decode the JWTToken inside the header
-        .addFilterBefore(new JwtFilter(this.tokenManager, this.userService),
+        .addFilterBefore(new JwtFilter(this.tokenManager, this.userRepository),
             UsernamePasswordAuthenticationFilter.class)
-        // This is to tell Spring to send Http 401 Unauthorized error when we try to
-        // make request without being authenticated
-        // Or else Spring will send by default Http 403 Forbidden error
-        .exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+        .httpBasic();
 
     return http.build();
   }

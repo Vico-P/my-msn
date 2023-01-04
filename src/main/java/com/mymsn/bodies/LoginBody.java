@@ -1,10 +1,9 @@
 package com.mymsn.bodies;
 
-import java.io.Serializable;
-
 // Body received from front when user is authenticating
-public class LoginBody implements Serializable {
+public class LoginBody {
     private String login;
+
     private String password;
 
     public String getLogin() {

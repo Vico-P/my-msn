@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 public class ConfigurationAppProperties {
     private String secret;
 
+    private String baseUrl;
+
     public ConfigurationAppProperties() {
     }
 
@@ -19,4 +21,11 @@ public class ConfigurationAppProperties {
         this.secret = secret;
     }
 
+    public String getBaseUrl() {
+        return this.baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 }

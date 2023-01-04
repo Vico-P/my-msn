@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map, catchError, of, throwError } from 'rxjs';
 import {
   HttpEvent,
   HttpInterceptor,
+  HttpErrorResponse,
   HttpHandler,
   HttpRequest,
 } from '@angular/common/http';
@@ -33,6 +34,19 @@ export class MyMsnInterceptor implements HttpInterceptor {
         ),
       });
     }
-    return next.handle(req);
+    return next.handle(req).pipe(
+      // If we have a 401 error it means the token has expired or is invalid
+      // so we clear the local storage and redirect to login page
+      // We use pipe to handle error and return a copy of the initial error normally
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          localStorage.clear();
+          this.router.navigate(['']);
+        }
+        return new Promise<any>((_, reject) => {
+          reject(error);
+        });
+      })
+    );
   }
 }

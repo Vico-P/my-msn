@@ -1,0 +1,90 @@
+<html>
+  <p-toast></p-toast>
+  <body>
+    <div class="d-flex flex-column align-items-center mt-4">
+      <img src="/assets/Logo.png" />
+      <h2>Create an account</h2>
+      <div
+        *ngIf="loading"
+        class="d-flex flex-column align-items-center justify-content-center mt-4"
+      >
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+      <div
+        *ngIf="sentCreationRequest"
+        class="d-flex flex-column align-items-center justify-content-center mt-4"
+      >
+        <img src="/assets/EmailSent.gif" />
+        <div class="col-12 d-flex flex-column align-items-center mt-2">
+          <label
+            >Congratulations ! Your account has been created
+            successfully.</label
+          >
+          <label>
+            An email has been sent in your box in order to verify your account
+          </label>
+          <a routerLink="/" class="mt-3">Go back</a>
+        </div>
+      </div>
+      <div
+        *ngIf="!loading && !sentCreationRequest"
+        class="d-flex flex-column align-items-center"
+      >
+        <form [formGroup]="registerForm">
+          <span class="p-float-label floating-field">
+            <input
+              id="login"
+              type="text"
+              class="w-100"
+              pInputText
+              formControlName="login"
+            />
+            <label for="login">Username</label>
+          </span>
+          <span class="p-float-label floating-field">
+            <input
+              id="email"
+              class="w-100"
+              type="text"
+              pInputText
+              formControlName="email"
+            />
+            <label for="email">Email</label>
+          </span>
+          <span class="p-float-label floating-field">
+            <p-password
+              id="password"
+              [toggleMask]="true"
+              formControlName="password"
+            ></p-password>
+            <label for="password">Password</label>
+          </span>
+          <span class="p-float-label floating-field">
+            <p-password
+              id="confirmPassword"
+              [toggleMask]="true"
+              [feedback]="false"
+              formControlName="confirmPassword"
+            ></p-password>
+            <label for="confirmPassword">Confirm password</label>
+          </span>
+          <small
+            *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']"
+            id="username-help"
+            class="p-error"
+            >The passwords are not the same.</small
+          >
+        </form>
+        <button
+          pButton
+          class="p-button-sm mt-3 d-block"
+          type="button"
+          label="Sign up"
+          [disabled]="!registerForm.valid"
+          (click)="register()"
+        ></button>
+        <a routerLink="/" class="mt-3">Go back</a>
+      </div>
+    </div>
+  </body>
+</html>
