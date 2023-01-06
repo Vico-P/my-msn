@@ -33,6 +33,7 @@ public class SecurityConfiguration {
             .requestMatchers("/api/login").permitAll()
             .requestMatchers("/api/register").permitAll()
             .requestMatchers("/api/verify-email").permitAll()
+            .requestMatchers("/api/reset-password/**").permitAll()
             .anyRequest().authenticated())
         // Adding our filter to decode the JWTToken inside the header
         .addFilterBefore(new JwtFilter(this.tokenManager, this.userRepository),

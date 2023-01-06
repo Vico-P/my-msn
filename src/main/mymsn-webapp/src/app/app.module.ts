@@ -13,6 +13,8 @@ import { RegisterComponent } from './component/register/register.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './component/home/home.component';
 import { VerifyEmailComponent } from './component/verify-email/verify-email.component';
+import { ResetPasswordFinishComponent } from './component/reset-password/finish/reset-password-finish.component';
+import { ResetPasswordInitComponent } from './component/reset-password/init/reset-password-init.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { VerifyEmailComponent } from './component/verify-email/verify-email.comp
     RegisterComponent,
     HomeComponent,
     VerifyEmailComponent,
+    ResetPasswordFinishComponent,
+    ResetPasswordInitComponent,
   ],
   imports: [
     BrowserModule,

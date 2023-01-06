@@ -2,6 +2,7 @@ package com.mymsn.services;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,6 +18,7 @@ import com.mymsn.bodies.RegisterBody;
 import com.mymsn.entities.Log;
 import com.mymsn.entities.User;
 import com.mymsn.exception.HttpErrorException;
+import com.mymsn.properties.ConfigurationAppProperties;
 import com.mymsn.repository.UserRepository;
 import com.mymsn.utils.MyMsnUtils;
 import com.mymsn.utils.enums.Action;
@@ -36,12 +38,15 @@ public class UserService {
 
     private final LogService logService;
 
+    private final ConfigurationAppProperties configurationAppProperties;
+
     public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, MailService mailService,
-            LogService logService) {
+            LogService logService, ConfigurationAppProperties configurationAppProperties) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.logService = logService;
+        this.configurationAppProperties = configurationAppProperties;
     }
 
     public Optional<User> findUserById(String id) {
@@ -57,7 +62,7 @@ public class UserService {
     }
 
     public void verifyUserEmail(String token) {
-        String[] decryptedToken = MyMsnUtils.decrypt(token).split(":");
+        String[] decryptedToken = MyMsnUtils.decrypt(token).split(MyMsnUtils.TOKEN_SEPERATOR);
         if (decryptedToken.length == 1) {
             this.logService.saveLog(new Log().action(Action.ERROR).message(
                     "Email verify error : The given token \"" + token + "\" is not valid ")
@@ -84,6 +89,62 @@ public class UserService {
                     "Email verify error : No user with id \"" + idUser + "\n")
                     .createdAt(LocalDateTime.now()));
             throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Email verify error", "No user with id provided");
+        }
+    }
+
+    public void finishResetPassword(String password, String token) {
+        String[] decryptedToken = MyMsnUtils.decrypt(token).split(MyMsnUtils.TOKEN_SEPERATOR);
+        if (decryptedToken.length == 1) {
+            this.logService.saveLog(new Log().action(Action.ERROR).message(
+                    "Reset password error : The given token \"" + token + "\" is not valid ")
+                    .createdAt(LocalDateTime.now()));
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error",
+                    "The given token is not valid");
+        }
+        String idUser = decryptedToken[0];
+        LocalDateTime timeSentEmail = LocalDateTime.parse(decryptedToken[1]);
+        if (LocalDateTime.now().isAfter(timeSentEmail
+                .plus(Long.parseLong(configurationAppProperties.getExpirationLinkTime()), ChronoUnit.MINUTES))) {
+            this.logService.saveLog(new Log().action(Action.ERROR).createdAt(LocalDateTime.now())
+                    .message("Reset password error : Link provided has expired"));
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error",
+                    "Link expired, go to the reset password page to generate a new link");
+        }
+        Optional<User> optionalUser = this.findUserById(idUser);
+        if (optionalUser.isEmpty()) {
+            this.logService.saveLog(new Log().action(Action.ERROR).createdAt(LocalDateTime.now())
+                    .message("Reset password error : no user who match id \"" + idUser + "\""));
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error",
+                    "No user found with infos given in token");
+        } else {
+            this.logService.saveLog(new Log().action(Action.UPDATE).createdAt(LocalDateTime.now())
+                    .message("Updating password for user with id \"" + idUser + "\""));
+            optionalUser.get().passwordHash(this.passwordEncoder.encode(password)).updatedAt(LocalDateTime.now());
+        }
+    }
+
+    public void initResetPassword(String username, String email) {
+        Optional<User> optionalUser = this.findUserByEmail(email);
+        if (optionalUser.isEmpty()) {
+            this.logService.saveLog(new Log().action(Action.ERROR).createdAt(LocalDateTime.now())
+                    .message("Reset password error : Email \"" + email + "\" not found"));
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error", "Email not found");
+        } else {
+            if (!optionalUser.get().getLogin().equalsIgnoreCase(username)) {
+                this.logService.saveLog(new Log().action(Action.ERROR).createdAt(LocalDateTime.now())
+                        .message("Reset password error : Username invalid for account \"" + optionalUser.get().getId()
+                                + "\" with \"" + email + "\""));
+                throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error",
+                        "Invalid username provided");
+            }
+            try {
+                this.mailService.sendResetPasswordMail(optionalUser.get());
+            } catch (MessagingException ex) {
+                this.logService.saveLog(new Log().action(Action.ERROR).createdAt(LocalDateTime.now()).message(
+                        "Reset password error : an error occured while sending email cause ==> " + ex.getMessage()));
+                log.error(
+                        "An error occured while sending the email to \"" + email + "\"", ex);
+            }
         }
     }
 

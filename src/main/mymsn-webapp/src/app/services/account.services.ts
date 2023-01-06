@@ -83,6 +83,50 @@ export class AccountService {
     });
   }
 
+  public resetPasswordFinish({
+    token,
+    password,
+    confirmPassword,
+  }: {
+    token: string;
+    password: string;
+    confirmPassword: string;
+  }): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .post<null>(
+          `${environment.apiUrl}/reset-password/finish?token=${token}`,
+          { password, confirmPassword }
+        )
+        .subscribe({
+          next: () => {
+            resolve();
+          },
+          error: (error: HttpErrorResponse) => {
+            reject(error);
+          },
+        });
+    });
+  }
+
+  public resetPasswordInit(username: string, email: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .post<null>(`${environment.apiUrl}/reset-password/init`, {
+          username,
+          email,
+        })
+        .subscribe({
+          next: () => {
+            resolve();
+          },
+          error: (error: HttpErrorResponse) => {
+            reject(error);
+          },
+        });
+    });
+  }
+
   public logout(): void {
     // Clearing localStorage
     localStorage.clear();
