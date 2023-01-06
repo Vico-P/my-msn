@@ -75,9 +75,31 @@ public class AccountEndpoint {
     @PostMapping("/register")
     private ResponseEntity<UserDto> registerAccount(@RequestBody RegisterBody params) {
         if (!params.isValid()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Form invalid");
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Register error", "Form invalid");
         }
         return ResponseEntity.ok().body(new UserDto(this.userService.createOrUpdateNonVerifiedUser(params)));
+    }
+
+    @PostMapping("/reset-password/init")
+    private ResponseEntity<Void> initResetPassword(@RequestBody RegisterBody params) {
+        if (params.getEmail().isBlank() || params.getUsername().isBlank()) {
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error", "Form invalid");
+        }
+        this.userService.initResetPassword(params.getUsername(), params.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password/finish")
+    private ResponseEntity<Void> finishResetPassword(@RequestParam String token, @RequestBody RegisterBody params) {
+        if (token == null || token.isBlank()) {
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error", "No token provided");
+        }
+        if (params.getConfirmPassword().isBlank() || params.getPassword().isBlank()
+                || !params.getConfirmPassword().equals(params.getPassword())) {
+            throw new HttpErrorException(HttpStatus.BAD_REQUEST, "Reset password error", "Form invalid");
+        }
+        this.userService.finishResetPassword(params.getPassword(), token);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
@@ -104,11 +126,17 @@ public class AccountEndpoint {
             return new ResponseEntity<>(new JwtDto(token), headers, HttpStatus.OK);
         } catch (AuthenticationException ex) {
             ex.printStackTrace();
+            // HttpErrorException is overriden by Spring Security Exception so we need to
+            // check the cause and throw it in case if the cause if an instance of
+            // HttpErrorException
+            if (ex.getCause() instanceof HttpErrorException) {
+                throw new HttpErrorException(HttpStatus.UNAUTHORIZED, "Login failed", ex.getMessage());
+            }
             this.logService.saveLog(
                     new Log().action(Action.ERROR)
                             .message("Error while connection with login \"" + params.getLogin() + "\"")
                             .createdAt(LocalDateTime.now()));
+            throw new HttpErrorException(HttpStatus.UNAUTHORIZED, "Login failed", "Username or password incorrect");
         }
-        throw new HttpErrorException(HttpStatus.UNAUTHORIZED, "Login failed", "Username or password incorrect");
     }
 }

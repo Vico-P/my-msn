@@ -6,3 +6,5 @@ security:
   ignored: /**
 configuration:
   secret: "asdfSFS34wfsdfsdfSDSD32dfsddDDerQSNCK34SOWEK5354fdgdf4"
+  # Time before a reset password link is invalid (in minutes)
+  expirationlinktime: 60

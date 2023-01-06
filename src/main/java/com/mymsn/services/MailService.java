@@ -1,5 +1,7 @@
 package com.mymsn.services;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -45,12 +47,27 @@ public class MailService {
         Context thymeleafContext = new Context();
         thymeleafContext.setVariable("baseUrl", configurationAppProperties.getBaseUrl());
         thymeleafContext.setVariable("url", configurationAppProperties.getBaseUrl() + "/verify-email?token="
-                + MyMsnUtils.encrypt(user.getEmail() + ":" + user.getId()));
+                + MyMsnUtils.encrypt(user.getEmail() + MyMsnUtils.TOKEN_SEPERATOR + user.getId()));
         thymeleafContext.setVariable("login",
                 user.getLogin().substring(0, 1).toUpperCase() + user.getLogin().substring(1).toLowerCase());
         String htmlBody = this.springTemplateEngine.process("email-validation.html", thymeleafContext);
 
         sendSimpleMessage(user.getEmail(), "Verify your email", htmlBody, true);
+    }
+
+    @Async
+    public void sendResetPasswordMail(User user)
+            throws MessagingException {
+        Context thymeleafContext = new Context();
+        thymeleafContext.setVariable("baseUrl", configurationAppProperties.getBaseUrl());
+        thymeleafContext.setVariable("url", configurationAppProperties.getBaseUrl() + "/reset-password/finish?token="
+                + MyMsnUtils.encrypt(
+                        user.getId() + MyMsnUtils.TOKEN_SEPERATOR + MyMsnUtils.formatDate(LocalDateTime.now())));
+        thymeleafContext.setVariable("login",
+                user.getLogin().substring(0, 1).toUpperCase() + user.getLogin().substring(1).toLowerCase());
+        String htmlBody = this.springTemplateEngine.process("reset-password-init.html", thymeleafContext);
+
+        sendSimpleMessage(user.getEmail(), "Reset your password", htmlBody, true);
     }
 
     @Async

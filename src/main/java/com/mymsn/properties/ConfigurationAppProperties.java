@@ -10,6 +10,8 @@ public class ConfigurationAppProperties {
 
     private String baseUrl;
 
+    private String expirationLinkTime;
+
     public ConfigurationAppProperties() {
     }
 
@@ -28,4 +30,13 @@ public class ConfigurationAppProperties {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
+
+    public String getExpirationLinkTime() {
+        return this.expirationLinkTime;
+    }
+
+    public void setExpirationLinkTime(String expirationLinkTime) {
+        this.expirationLinkTime = expirationLinkTime;
+    }
+
 }

@@ -7,12 +7,12 @@ spring:
   liquibase:
     change-log: db/master.xml
 mail:
-  host: smtp.mailgun.org
-  port: 587
-  username: postmaster@sandboxb1336a3eae784c92b3c5a9b10da17989.mailgun.org
+  host: 127.0.0.1
+  port: 1025
+  username:
   password:
-  enablettls: true
-  auth: true
+  enablettls: false
+  auth: false
   frommail: vicosenderdev@yopmail.com
 configuration:
   baseUrl: http://localhost:4200

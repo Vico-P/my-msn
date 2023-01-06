@@ -1,17 +1,30 @@
 package com.mymsn.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.binary.Hex;
+
 public class MyMsnUtils {
+    public static final String TOKEN_SEPERATOR = ";";
+
     public static final String REGEX_EMAIL = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
             + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
 
     private static final String aesKeyValue = "mYq3t6w9z$C&F)J@NcRfUjWnZr4u7x!A";
+
+    public static String formatDate(LocalDateTime toFormat) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        return toFormat.format(formatter);
+    }
 
     /**
      * Encrypt a string using AES encryption algorithm.
@@ -26,7 +39,7 @@ public class MyMsnUtils {
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, key);
             byte[] encVal = c.doFinal(toEncrypt.getBytes());
-            encodedPwd = Base64.getEncoder().encodeToString(encVal);
+            encodedPwd = Hex.encodeHexString(encVal);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,7 +60,7 @@ public class MyMsnUtils {
             Key key = generateKey();
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.DECRYPT_MODE, key);
-            byte[] decordedValue = Base64.getDecoder().decode(encryptedData);
+            byte[] decordedValue = Hex.decodeHex(encryptedData);
             byte[] decValue = c.doFinal(decordedValue);
             decodedPWD = new String(decValue);
 

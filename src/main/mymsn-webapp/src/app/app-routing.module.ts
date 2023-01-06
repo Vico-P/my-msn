@@ -4,9 +4,11 @@ import { HomeComponent } from './component/home/home.component';
 import { LoginComponent } from './component/login/login.component';
 import { NotFoundComponent } from './component/not-found/not-found.component';
 import { RegisterComponent } from './component/register/register.component';
+import { ResetPasswordFinishComponent } from './component/reset-password/finish/reset-password-finish.component';
+import { ResetPasswordInitComponent } from './component/reset-password/init/reset-password-init.component';
 import { VerifyEmailComponent } from './component/verify-email/verify-email.component';
 import { NotLoggedGuard } from './guard/not-logged.guard';
-import { TokenVerifyEmailGuard } from './guard/token-verify-email.guard';
+import { TokenInParamsUrlGuard } from './guard/token-in-params-url.guard';
 import { TokenGuard } from './guard/token.guard';
 
 const routes: Routes = [
@@ -37,8 +39,25 @@ const routes: Routes = [
   {
     path: 'verify-email',
     component: VerifyEmailComponent,
-    canActivate: [NotLoggedGuard, TokenVerifyEmailGuard],
+    canActivate: [NotLoggedGuard, TokenInParamsUrlGuard],
     title: 'Verify your email',
+  },
+  {
+    path: 'reset-password',
+    children: [
+      {
+        path: 'init',
+        component: ResetPasswordInitComponent,
+        canActivate: [NotLoggedGuard],
+        title: 'Password forgotten',
+      },
+      {
+        path: 'finish',
+        component: ResetPasswordFinishComponent,
+        canActivate: [NotLoggedGuard, TokenInParamsUrlGuard],
+        title: 'Set new password',
+      },
+    ],
   },
   { path: '**', component: NotFoundComponent },
 ];

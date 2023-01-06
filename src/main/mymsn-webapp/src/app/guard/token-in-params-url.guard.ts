@@ -8,14 +8,13 @@ import {
 } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
-export class TokenVerifyEmailGuard implements CanActivate {
+export class TokenInParamsUrlGuard implements CanActivate {
   constructor(private router: Router, private messageService: MessageService) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    console.log(route.queryParams);
     if (!route.queryParams['token']) {
       this.router.navigate(['/']).then(() => {
         // To display error after DOM has been initialized
@@ -23,7 +22,7 @@ export class TokenVerifyEmailGuard implements CanActivate {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'We cannot verify your account',
+            detail: 'No token provided, unable to continue',
           });
         }, 100);
       });
