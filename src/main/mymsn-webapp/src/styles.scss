@@ -1,0 +1,34 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Primeng import
+$gutter: 1rem; //for primeflex grid system
+@import "assets/layout/styles/layout/layout.scss";
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+
+// Boostrap import
+@import "~bootstrap/dist/css/bootstrap.css";
+
+//Roboto font-family import
+@import "~@fontsource/roboto/index.css";
+
+.floating-field {
+  margin-top: 30px;
+}
+
+html {
+  font-family: "Roboto";
+}
+
+h2,
+label {
+  color: #3b82f6;
+}
+
+// Toast margin top modification
+.p-toast.p-toast-top-right,
+.p-toast.p-toast-top-left,
+.p-toast.p-toast-top-center {
+  top: 20px;
+}
