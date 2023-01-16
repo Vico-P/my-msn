@@ -33,6 +33,10 @@ const routes: Routes = [
       ),
     canActivate: [NotLoggedGuard],
   },
+  {
+    path: '**',
+    redirectTo: '/notfound',
+  },
 ];
 
 // configures NgModule imports and exports

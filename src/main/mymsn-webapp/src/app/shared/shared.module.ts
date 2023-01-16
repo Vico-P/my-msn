@@ -8,7 +8,8 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
 import { CommonModule } from '@angular/common';
-import { CardModule } from '../custom-component/card/card.module';
+import { MyMsnDivModule } from '../custom-component/mymsn-div/mymsn-div.module';
+import { MyMsnColoredDivModule } from '../custom-component/mymsn-form/mymsn-colored-div.module';
 
 @NgModule({
   exports: [
@@ -20,7 +21,8 @@ import { CardModule } from '../custom-component/card/card.module';
     ToastModule,
     CheckboxModule,
     CommonModule,
-    CardModule,
+    MyMsnColoredDivModule,
+    MyMsnDivModule,
   ],
   imports: [
     InputTextModule,
@@ -31,7 +33,8 @@ import { CardModule } from '../custom-component/card/card.module';
     ToastModule,
     CheckboxModule,
     CommonModule,
-    CardModule,
+    MyMsnColoredDivModule,
+    MyMsnDivModule,
   ],
   providers: [MessageService],
 })

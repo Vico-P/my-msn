@@ -1,0 +1,7 @@
+<div [class]="gridClass ? 'grid ' + gridClass : 'grid'">
+  <div [class]="divClass ?? 'col-12'">
+    <div class="card">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>

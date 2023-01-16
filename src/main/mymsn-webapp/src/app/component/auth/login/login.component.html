@@ -1,5 +1,5 @@
 <p-toast></p-toast>
-<mymsn-card>
+<mymsn-colored-div>
   <div class="text-center mb-5">
     <img
       src="/assets/images/Logo.png"
@@ -50,7 +50,7 @@
         class="font-medium no-underline ml-2 text-right cursor-pointer"
         style="color: var(--primary-color)"
         routerLink="/reset-password/init"
-        >Forgot password?</a
+        >Forgot password ?</a
       >
     </div>
     <button
@@ -61,7 +61,6 @@
       [loading]="loading"
       (click)="login()"
       class="w-full p-3 text-xl"
-      routerLink="/"
     ></button>
   </div>
-</mymsn-card>
+</mymsn-colored-div>

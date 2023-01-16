@@ -8,9 +8,9 @@ import {
 import { MenuItem } from 'primeng/api';
 
 @Component({
-  selector: 'mymsn-card',
-  templateUrl: './card.component.html',
+  selector: 'mymsn-colored-div',
+  templateUrl: './mymsn-colored-div.component.html',
 })
-export class CardComponent {
+export class MyMsnColoredDivComponent {
   constructor() {}
 }

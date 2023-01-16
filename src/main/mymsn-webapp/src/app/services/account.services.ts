@@ -127,6 +127,10 @@ export class AccountService {
     });
   }
 
+  public isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
   public logout(): void {
     // Clearing localStorage
     localStorage.clear();
