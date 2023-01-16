@@ -1,0 +1,42 @@
+<div class="layout-topbar">
+  <a class="layout-topbar-logo" routerLink="">
+    <img src="assets/images/Logo.png" alt="logo" />
+    <span>MyMsn</span>
+  </a>
+
+  <button
+    #menubutton
+    class="p-link layout-menu-button layout-topbar-button"
+    (click)="layoutService.onMenuToggle()"
+  >
+    <i class="pi pi-bars"></i>
+  </button>
+
+  <button
+    #topbarmenubutton
+    class="p-link layout-topbar-button layout-topbar-menu-button"
+    (click)="layoutService.showProfileMenu()"
+  >
+    <i class="pi pi-user"></i>
+  </button>
+
+  <div
+    #topbarmenu
+    class="layout-topbar-menu"
+    [ngClass]="{
+      'layout-topbar-menu-active': layoutService.state.profileMenuVisible
+    }"
+  >
+    <button
+      class="p-link layout-topbar-button"
+      (click)="editProfileOnDevAlert()"
+    >
+      <i class="pi pi-user-edit"></i>
+      <span>Edit profile</span>
+    </button>
+    <button class="p-link layout-topbar-button" (click)="logout()">
+      <i class="pi pi-sign-out"></i>
+      <span>Logout</span>
+    </button>
+  </div>
+</div>

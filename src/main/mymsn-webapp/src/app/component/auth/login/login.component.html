@@ -1,0 +1,66 @@
+<p-toast></p-toast>
+<mymsn-colored-div>
+  <div class="text-center mb-5">
+    <img
+      src="/assets/images/Logo.png"
+      alt="MyMsn Logo"
+      height="50"
+      class="mb-3"
+    />
+    <div class="text-900 text-3xl font-medium mb-3">MyMsn</div>
+    <span class="text-600 font-medium">Sign in to continue</span>
+  </div>
+
+  <div>
+    <form [formGroup]="loginForm">
+      <label for="login" class="block text-900 text-xl font-medium mb-2"
+        >Email or Username</label
+      >
+      <input
+        id="login"
+        type="text"
+        placeholder="Email or Username"
+        pInputText
+        class="w-full md:w-30rem mb-5"
+        style="padding: 1rem"
+        formControlName="login"
+      />
+
+      <label for="password" class="block text-900 font-medium text-xl mb-2"
+        >Password</label
+      >
+      <p-password
+        id="password"
+        placeholder="Password"
+        [toggleMask]="true"
+        [feedback]="false"
+        styleClass="mb-5"
+        formControlName="password"
+        inputStyleClass="w-full p-3 md:w-30rem"
+      ></p-password>
+    </form>
+    <div class="flex align-items-center justify-content-between mb-5 gap-5">
+      <a
+        class="font-medium no-underline text-right cursor-pointer"
+        style="color: var(--primary-color)"
+        routerLink="/register"
+        >Register</a
+      >
+      <a
+        class="font-medium no-underline ml-2 text-right cursor-pointer"
+        style="color: var(--primary-color)"
+        routerLink="/reset-password/init"
+        >Forgot password ?</a
+      >
+    </div>
+    <button
+      pButton
+      pRipple
+      label="Sign In"
+      [disabled]="loginForm.invalid"
+      [loading]="loading"
+      (click)="login()"
+      class="w-full p-3 text-xl"
+    ></button>
+  </div>
+</mymsn-colored-div>

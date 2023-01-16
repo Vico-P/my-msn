@@ -19,8 +19,4 @@ export class HomeComponent implements OnInit {
       console.log('COMMUNICATING WITH BACKEND : ', result);
     });
   }
-
-  logout() {
-    this.accountService.logout();
-  }
 }
